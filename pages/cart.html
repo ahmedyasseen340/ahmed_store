@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Cart — Aspire</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <style>
+      .cart-page-wrap {
+        padding: 56px 0 100px;
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        gap: 50px;
+      }
+      @media (max-width: 880px) {
+        .cart-page-wrap {
+          grid-template-columns: 1fr;
+        }
+      }
+      .cart-page-items .cart-line {
+        grid-template-columns: 90px 1fr auto;
+      }
+      .cart-page-items .cart-line img {
+        width: 90px;
+        height: 108px;
+      }
+      .summary-box {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 26px;
+        height: fit-content;
+      }
+      .summary-box h3 {
+        font-family: var(--body);
+        text-transform: none;
+        letter-spacing: 0;
+        font-size: 1.1rem;
+        margin-bottom: 18px;
+      }
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.92rem;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .summary-row.total {
+        font-weight: 700;
+        font-size: 1.05rem;
+        border-bottom: none;
+        padding-top: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <button
+          class="burger"
+          onclick="openDrawer('mobileMenu')"
+          aria-label="Open menu"
+        >
+          <span></span><span></span><span></span>
+        </button>
+        <a href="../index.html" class="logo">ASPIRE</a>
+        <nav class="main-nav">
+          <a href="../index.html">Home</a>
+          <a href="../catalog.html">Catalog</a>
+          <a href="contact.html">Contact</a>
+        </nav>
+        <div class="header-actions">
+          <button
+            class="icon-btn"
+            onclick="openDrawer('cartDrawer')"
+            aria-label="Open cart"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+            >
+              <path d="M6 6h15l-1.5 9h-12z" />
+              <path d="M6 6L4 2H2" />
+              <circle cx="9.5" cy="20" r="1.2" />
+              <circle cx="17.5" cy="20" r="1.2" />
+            </svg>
+            <span class="cart-count">0</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="breadcrumb">
+      <div class="wrap"><a href="../index.html">Home</a> / Cart</div>
+    </div>
+
+    <div class="wrap">
+      <h2 class="section-title" style="margin-top: 36px">Your cart</h2>
+
+      <!-- STEP 1 — cart review -->
+      <div class="cart-page-wrap" id="step1">
+        <div class="cart-page-items" id="pageCartItems"></div>
+        <div class="summary-box">
+          <h3>Order summary</h3>
+          <div class="summary-row">
+            <span>Subtotal</span><span id="pageSubtotal">LE 0.00 EGP</span>
+          </div>
+          <div class="summary-row">
+            <span>Shipping</span><span>Calculated at checkout</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total</span><span id="pageTotal">LE 0.00 EGP</span>
+          </div>
+          <button
+            class="btn btn-dark"
+            style="width: 100%; margin-top: 20px"
+            id="goToDetailsBtn"
+            onclick="goToStep(2)"
+          >
+            Checkout
+          </button>
+          <a
+            href="../catalog.html"
+            class="btn btn-outline"
+            style="width: 100%; margin-top: 10px; display: flex"
+            >Continue shopping</a
+          >
+        </div>
+      </div>
+
+      <!-- STEP 2 — customer details -->
+      <div
+        id="step2"
+        style="display: none; max-width: 520px; padding: 40px 0 100px"
+      >
+        <h3
+          style="
+            font-family: var(--body);
+            font-size: 1.2rem;
+            margin-bottom: 22px;
+          "
+        >
+          Delivery details
+        </h3>
+        <div class="field">
+          <label for="custName">Full name</label
+          ><input id="custName" type="text" required />
+        </div>
+        <div class="field">
+          <label for="custPhone">Phone number</label
+          ><input id="custPhone" type="tel" required />
+        </div>
+        <div class="field">
+          <label for="custCity">City</label
+          ><input id="custCity" type="text" required />
+        </div>
+        <div class="field">
+          <label for="custAddress">Address</label
+          ><textarea id="custAddress" required></textarea>
+        </div>
+        <div style="display: flex; gap: 10px">
+          <button class="btn btn-outline" onclick="goToStep(1)">Back</button>
+          <button class="btn btn-dark" style="flex: 1" onclick="goToPayment()">
+            Continue to payment
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 3 — manual payment instructions -->
+      <div
+        id="step3"
+        style="display: none; max-width: 560px; padding: 40px 0 100px"
+      >
+        <h3
+          style="
+            font-family: var(--body);
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+          "
+        >
+          Complete your payment
+        </h3>
+        <p style="color: var(--stone); margin-bottom: 24px; line-height: 1.7">
+          Transfer the total amount below, then tap the WhatsApp button to send
+          us your order and payment confirmation — we'll confirm and start
+          preparing your order.
+        </p>
+        <div class="summary-box" style="margin-bottom: 24px">
+          <div class="summary-row">
+            <span>Pay via</span><span id="payProvider"></span>
+          </div>
+          <div class="summary-row">
+            <span>Number</span><span id="payNumber"></span>
+          </div>
+          <div class="summary-row">
+            <span>Account name</span><span id="payName"></span>
+          </div>
+          <div class="summary-row total">
+            <span>Amount to send</span><span id="payTotal"></span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px">
+          <button class="btn btn-outline" onclick="goToStep(2)">Back</button>
+          <button
+            class="btn btn-dark"
+            style="flex: 1"
+            onclick="confirmOrderWhatsApp()"
+          >
+            I've paid — send order on WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="wrap">
+        <div class="footer-bottom" style="border-top: none; padding-top: 0">
+          <span>© 2026 Aspire. All rights reserved.</span>
+        </div>
+      </div>
+    </footer>
+
+    <div class="drawer drawer-left" id="mobileMenu">
+      <div class="drawer-head">
+        <span class="logo" style="font-size: 1.4rem">ASPIRE</span
+        ><button class="drawer-close" onclick="closeDrawers()">×</button>
+      </div>
+      <nav class="mobile-nav">
+        <a href="../index.html">Home</a><a href="../catalog.html">Catalog</a
+        ><a href="contact.html">Contact</a>
+      </nav>
+    </div>
+    <div class="drawer drawer-right cart-drawer" id="cartDrawer">
+      <div class="drawer-head">
+        <span
+          style="
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+          "
+          >Your cart</span
+        ><button class="drawer-close" onclick="closeDrawers()">×</button>
+      </div>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="cart-footer" id="cartFooter" style="display: none">
+        <div class="cart-subtotal">
+          <span>Subtotal</span><span id="cartSubtotal">LE 0.00 EGP</span>
+        </div>
+        <a href="cart.html" class="btn btn-dark">Checkout</a>
+      </div>
+    </div>
+    <div class="drawer-overlay" id="overlay" onclick="closeDrawers()"></div>
+    <div class="toast" id="toast"></div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/products.js"></script>
+    <script src="../js/cart.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+      function renderPageCart() {
+        const items = Cart.get();
+        const wrap = document.getElementById("pageCartItems");
+        const goBtn = document.getElementById("goToDetailsBtn");
+        if (items.length === 0) {
+          wrap.innerHTML = `<div class="cart-empty">Your cart is empty.<br><br><a href="../catalog.html" class="btn btn-outline">Shop all</a></div>`;
+          if (goBtn) goBtn.disabled = true;
+        } else {
+          if (goBtn) goBtn.disabled = false;
+          wrap.innerHTML = items
+            .map((item, index) => {
+              const p = PRODUCTS.find((x) => x.slug === item.slug);
+              if (!p) return "";
+              return `
+          <div class="cart-line">
+            <img src="${p.images[0]}" alt="${p.name}">
+            <div>
+              <h4>${p.name}</h4>
+              <div class="meta">Size: ${item.size} · ${formatPrice(
+                p.price
+              )}</div>
+              <div class="qty-control">
+                <button onclick="Cart.updateQty(${index}, ${
+                item.qty - 1
+              }); renderPageCart();">−</button>
+                <span>${item.qty}</span>
+                <button onclick="Cart.updateQty(${index}, ${
+                item.qty + 1
+              }); renderPageCart();">+</button>
+              </div>
+            </div>
+            <button class="remove" onclick="Cart.remove(${index}); renderPageCart();">Remove</button>
+          </div>`;
+            })
+            .join("");
+        }
+        document.getElementById("pageSubtotal").textContent = formatPrice(
+          Cart.subtotal()
+        );
+        document.getElementById("pageTotal").textContent = formatPrice(
+          Cart.subtotal()
+        );
+      }
+      renderPageCart();
+
+      function goToStep(n) {
+        if (n === 2 && Cart.get().length === 0) return;
+        document.getElementById("step1").style.display =
+          n === 1 ? "grid" : "none";
+        document.getElementById("step2").style.display =
+          n === 2 ? "block" : "none";
+        document.getElementById("step3").style.display =
+          n === 3 ? "block" : "none";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function goToPayment() {
+        const required = ["custName", "custPhone", "custCity", "custAddress"];
+        for (const id of required) {
+          if (!document.getElementById(id).value.trim()) {
+            showToast("Please fill in all delivery details");
+            return;
+          }
+        }
+        document.getElementById("payProvider").textContent =
+          STORE_CONFIG.payment.provider;
+        document.getElementById("payNumber").textContent =
+          STORE_CONFIG.payment.number;
+        document.getElementById("payName").textContent =
+          STORE_CONFIG.payment.accountHolderName;
+        document.getElementById("payTotal").textContent = formatPrice(
+          Cart.subtotal()
+        );
+        goToStep(3);
+      }
+
+      function confirmOrderWhatsApp() {
+        const name = document.getElementById("custName").value;
+        const phone = document.getElementById("custPhone").value;
+        const city = document.getElementById("custCity").value;
+        const address = document.getElementById("custAddress").value;
+
+        const items = Cart.get();
+        const lines = items
+          .map((item) => {
+            const p = PRODUCTS.find((x) => x.slug === item.slug);
+            return p
+              ? `- ${p.name} (${item.size}) × ${item.qty} — ${formatPrice(
+                  p.price * item.qty
+                )}`
+              : "";
+          })
+          .filter(Boolean)
+          .join("\n");
+
+        const text = `New order from the Aspire website
+
+Name: ${name}
+Phone: ${phone}
+City: ${city}
+Address: ${address}
+
+Items:
+${lines}
+
+Total: ${formatPrice(Cart.subtotal())}
+Payment: sent via ${STORE_CONFIG.payment.provider} to ${
+          STORE_CONFIG.payment.number
+        }`;
+
+        window.open(
+          `https://wa.me/${
+            STORE_CONFIG.whatsappNumber
+          }?text=${encodeURIComponent(text)}`,
+          "_blank"
+        );
+      }
+    </script>
+  </body>
+</html>
